@@ -1,4 +1,5 @@
 import uuid
+from datetime import date 
 
 from django.db import models
 from django.urls import reverse
@@ -35,13 +36,10 @@ class Book(models.Model):
     summary = models.TextField(max_length=1000, help_text='Enter a brief description of the book')
     isbn = models.CharField('ISBN', max_length=13, unique=True, help_text='13 Character <a href="https://www.isbn-international.org/content/what-isbn">ISBN number</a>')
     genre = models.ManyToManyField(Genre, help_text='Select a genre for this book')
+    language = models.ForeignKey("Language", on_delete=models.SET_NULL, null=True)
 
-    def __str__(self):
-        """
-        String for representing the Model object.
-        """
-        return self.title
-        
+    class Meta:
+        ordering = ['title', 'author']
 
     def display_genre(self):
         """
@@ -57,20 +55,25 @@ class Book(models.Model):
         """
         return reverse('book-detail', args=[str(self.id)])
 
-
+    def __str__(self):
+        """
+        String for representing the Model object.
+        """
+        return self.title
+        
 
 class BookInstance(models.Model):
     """
     Model representing a specific copy of a book 
     (i.e that can be borrowed from the library).
     """
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, help_text='Unique ID for this particular book across whole library')
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, help_text="Unique ID for this particular book across whole library")
     book = models.ForeignKey('Book', on_delete=models.RESTRICT)
     imprint = models.CharField(max_length=200)
     due_back = models.DateField(null=True, blank=True)
 
     LOAN_STATUS = (
-        ('m', 'Maintenance'),
+        ('d', 'Maintenance'),
         ('o', 'On loan'),
         ('a', 'Available'),
         ('r', 'Reserved'),
@@ -80,20 +83,19 @@ class BookInstance(models.Model):
         max_length=1,
         choices=LOAN_STATUS,
         blank=True,
-        default='m',
-        help_text='Book availability',
-    )
+        default='d',
+        help_text='Book availability')
 
     class Meta:
         ordering = ['due_back']
+        permissions = (("can_mark_returned", "Set book as returned"),)
 
     def __str__(self):
         """
         String for representing the Model object.
         """
-        return f'{self.id} ({self.book.title})'
+        return '{0} ({1})'.format(self.id, self.book.title)
 
-    
 class Author(models.Model):
     """
     Model representing an author.
@@ -110,10 +112,10 @@ class Author(models.Model):
         """
         Return the url to access a particular author instance.
         """
-        return reverse("author_detail", args=[str(self.id)])
+        return reverse("author-detail", args=[str(self.id)])
     
     def __str__(self):
         """
         String for representing the Model object.
         """
-        return f'{self.last_name}, {self.first_name}'
+        return '{0}, {1}'.format(self.last_name, self.first_name)
