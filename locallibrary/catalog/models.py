@@ -9,7 +9,10 @@ class Genre(models.Model):
     """ 
     Model representing a book genre
     """
-    name = models.CharField(max_length=200, help_text='Enter a book genre (e.g. Science Fiction)')
+    name = models.CharField(
+        max_length=200, 
+        help_text='Enter a book genre (e.g. Science Fiction)'
+        )
 
     def __str__(self):
         """
@@ -19,8 +22,11 @@ class Genre(models.Model):
     
 
 class Language(models.Model):
-    """Model representing a Language (e.g. English, French, Japanese, etc.)"""
-    name = models.CharField(max_length=200, help_text="Enter the book's natural language (e.g. English, French, Japanese, etc)")
+    """
+    Model representing a Language (e.g. English, French, Japanese, etc.)
+    """
+    name = models.CharField(max_length=200, 
+                            help_text="Enter the book's natural language (e.g. English, French, Japanese, etc)")
 
     def __str__(self):
         """String for representing the Model object (in Admin site etc.)"""
@@ -45,7 +51,7 @@ class Book(models.Model):
         """
         Create a string for the Genre. This is required to display genre in Admin.
         """
-        return ', '.join(genre.name for genre in self.genre.all()[:3])
+        return ', '.join([genre.name for genre in self.genre.all()[:3]])
 
     display_genre.short_description = 'Genre'    
 
@@ -54,7 +60,7 @@ class Book(models.Model):
         Returns the url to access a detail record for this book
         """
         return reverse('book-detail', args=[str(self.id)])
-
+        
     def __str__(self):
         """
         String for representing the Model object.
@@ -67,7 +73,8 @@ class BookInstance(models.Model):
     Model representing a specific copy of a book 
     (i.e that can be borrowed from the library).
     """
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, help_text="Unique ID for this particular book across whole library")
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4,
+                          help_text="Unique ID for this particular book across whole library")
     book = models.ForeignKey('Book', on_delete=models.RESTRICT)
     imprint = models.CharField(max_length=200)
     due_back = models.DateField(null=True, blank=True)
