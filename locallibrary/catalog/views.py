@@ -40,6 +40,7 @@ class BookListView(generic.ListView):
     context_object_name = 'book_list'
     queryset = Book.objects.all()
     template_name = "catalog/book_list.html"
+    paginate_by = 2
 
 
 
@@ -48,6 +49,14 @@ class BookDetailView(generic.DetailView):
     template_name = "catalog/book_detail.html"
 
 
+class AuthorListView(generic.ListView):
+    model = Author
+    context_object_name = 'author_list'
+    queryset = Author.objects.all()
+    template_name = "catalog/author_list.html"
+
+
 class AuthorDetailView(generic.DetailView):
     """Generic class-based detail view for an author."""
     model = Author
+    template_name = "catalog/author_detail.html"
