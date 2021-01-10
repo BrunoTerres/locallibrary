@@ -2,8 +2,9 @@ import datetime
 
 from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse, HttpResponseRedirect
-from django.urls import reverse
+from django.urls import reverse, reverse_lazy
 from django.views import generic
+from django.views.generic.edit import CreateView, UpdateView, DeleteView
 #require login to function based view
 from django.contrib.auth.decorators import login_required, permission_required
 #require login to class based view
@@ -123,3 +124,21 @@ class LoanedBooksListView(PermissionRequiredMixin, generic.ListView):
 
     def get_queryset(self):
         return BookInstance.objects.filter(status__exact='o').order_by('due_back')
+
+
+
+class AuthorCreate(PermissionRequiredMixin, CreateView):
+    model = Author
+    permission_required = 'catalog.can_mark_returned'
+    fields = ['first_name', 'last_name', 'date_of_birth', 'date_of_death']
+
+
+class AuthorUpdate(PermissionRequiredMixin ,UpdateView):
+    model = Author
+    permission_required = 'catalog.can_mark_returned'
+    fields = ['first_name', 'last_name', 'date_of_birth', 'date_of_death']  # '__all__'  Not recomended (Potential security issue if more fields added)
+
+class AuthorDelete(PermissionRequiredMixin ,DeleteView):
+    model = Author
+    permission_required = 'catalog.can_mark_returned'
+    success_url = reverse_lazy('authors')
