@@ -5,7 +5,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse
 from django.views import generic
 #require login to function based view
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required, permission_required
 #require login to class based view
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 
@@ -44,7 +44,8 @@ def index(request):
 
     return render(request, 'catalog/index.html', context=context)
 
-
+@login_required
+@permission_required('catalog.can_mark_returned', raise_exception=True)
 def renew_book_librarian(request, pk):
     book_instance = get_object_or_404(BookInstance, pk=pk)
 
@@ -57,7 +58,7 @@ def renew_book_librarian(request, pk):
         # Check if the form is valid:
         if form.is_valid():
             # Process the data in form.cleaned_data as required (here we just write it to the model due_back field).
-            book_instance.due_back = form.cleaned_data['renewal_Date']
+            book_instance.due_back = form.cleaned_data['renewal_date']
             book_instance.save()
 
             # Redirect to a new URL:
