@@ -125,8 +125,12 @@ class LoanedBooksListView(PermissionRequiredMixin, generic.ListView):
     def get_queryset(self):
         return BookInstance.objects.filter(status__exact='o').order_by('due_back')
 
-
-
+"""
+For this kind of Class Based View the Django expects a Template name with a certain pattern
+Ex: for a BookCreateView it expects a template as 'book_form.html' or 'MODEL_form.html
+For a BookDeleteView it expects a template as 'book_confirm_delete.html' or 'MODEL_confirm_delete.html'
+It dispenses you set a 'template_name' in this view case. If you don't follow the pattern you shoud to point a 'template_name'
+"""
 class AuthorCreate(PermissionRequiredMixin, CreateView):
     model = Author
     permission_required = 'catalog.can_mark_returned'

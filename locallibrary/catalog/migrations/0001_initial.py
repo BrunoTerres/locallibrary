@@ -20,7 +20,7 @@ class Migration(migrations.Migration):
                 ('first_name', models.CharField(max_length=100)),
                 ('last_name', models.CharField(max_length=100)),
                 ('date_of_birth', models.DateField(blank=True, null=True)),
-                ('date_of_death', models.DateField(blank=True, null=True, verbose_name='Died')),
+                ('date_of_death', models.DateField(blank=True, null=True, verbose_name='died')),
             ],
             options={
                 'ordering': ['last_name', 'first_name'],
